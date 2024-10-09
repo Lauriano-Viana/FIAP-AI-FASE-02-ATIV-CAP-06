@@ -1,0 +1,158 @@
+Abaixo está o código Python que implementa um CRUD (Create, Read, Update, Delete) para as tabelas `sensores`, `acoes_controle`, e `aplicacao_produtos`, que foram definidas no seu script SQL. O código usará a biblioteca `cx_Oracle` para interagir com o banco de dados Oracle.
+
+### Código Python para CRUD
+
+```python
+import cx_Oracle
+
+# Função para conectar ao banco de dados Oracle
+def conectar_banco():
+    try:
+        dsn_tns = cx_Oracle.makedsn('localhost', '1521', service_name='orcl')
+        conexao = cx_Oracle.connect(user='seu_usuario', password='sua_senha', dsn=dsn_tns)
+        print("Conectado ao banco de dados Oracle")
+        return conexao
+    except cx_Oracle.DatabaseError as e:
+        print(f"Erro ao conectar ao banco de dados: {e}")
+        return None
+
+# Função para criar um novo sensor
+def criar_sensor(conexao, id_sensor, tipo, valor):
+    try:
+        cursor = conexao.cursor()
+        cursor.execute(
+            """
+            INSERT INTO sensores (id_sensor, tipo, valor) 
+            VALUES (:1, :2, :3)
+            """, (id_sensor, tipo, valor)
+        )
+        conexao.commit()
+        print(f"Sensor {id_sensor} criado com sucesso.")
+    except cx_Oracle.DatabaseError as e:
+        print(f"Erro ao criar sensor: {e}")
+
+# Função para ler sensores
+def ler_sensores(conexao):
+    try:
+        cursor = conexao.cursor()
+        cursor.execute("SELECT * FROM sensores")
+        sensores = cursor.fetchall()
+        for sensor in sensores:
+            print(f"ID: {sensor[0]}, Tipo: {sensor[1]}, Valor: {sensor[2]}, Data: {sensor[3]}")
+    except cx_Oracle.DatabaseError as e:
+        print(f"Erro ao ler sensores: {e}")
+
+# Função para atualizar um sensor
+def atualizar_sensor(conexao, id_sensor, novo_valor):
+    try:
+        cursor = conexao.cursor()
+        cursor.execute(
+            """
+            UPDATE sensores 
+            SET valor = :1
+            WHERE id_sensor = :2
+            """, (novo_valor, id_sensor)
+        )
+        conexao.commit()
+        print(f"Sensor {id_sensor} atualizado com sucesso.")
+    except cx_Oracle.DatabaseError as e:
+        print(f"Erro ao atualizar sensor: {e}")
+
+# Função para deletar um sensor
+def deletar_sensor(conexao, id_sensor):
+    try:
+        cursor = conexao.cursor()
+        cursor.execute(
+            """
+            DELETE FROM sensores 
+            WHERE id_sensor = :1
+            """, (id_sensor,)
+        )
+        conexao.commit()
+        print(f"Sensor {id_sensor} deletado com sucesso.")
+    except cx_Oracle.DatabaseError as e:
+        print(f"Erro ao deletar sensor: {e}")
+
+# Função para criar uma ação de controle integrado de pragas (CIP)
+def criar_acao_controle(conexao, id_sensor, tipo, valor, metodo):
+    try:
+        cursor = conexao.cursor()
+        cursor.execute(
+            """
+            INSERT INTO acoes_controle (id_acao, id_sensor, tipo, valor, metodo) 
+            VALUES (seq_acoes_controle.NEXTVAL, :1, :2, :3, :4)
+            """, (id_sensor, tipo, valor, metodo)
+        )
+        conexao.commit()
+        print("Ação de controle registrada com sucesso.")
+    except cx_Oracle.DatabaseError as e:
+        print(f"Erro ao criar ação de controle: {e}")
+
+# Função para criar uma aplicação de produto (pesticida/fungicida)
+def criar_aplicacao_produto(conexao, id_sensor, produto):
+    try:
+        cursor = conexao.cursor()
+        cursor.execute(
+            """
+            INSERT INTO aplicacao_produtos (id_aplicacao, id_sensor, produto) 
+            VALUES (seq_aplicacao_produtos.NEXTVAL, :1, :2)
+            """, (id_sensor, produto)
+        )
+        conexao.commit()
+        print("Aplicação de produto registrada com sucesso.")
+    except cx_Oracle.DatabaseError as e:
+        print(f"Erro ao criar aplicação de produto: {e}")
+
+# Função principal para executar o CRUD
+def main():
+    # Conectar ao banco de dados
+    conexao = conectar_banco()
+    if not conexao:
+        return
+
+    # Exemplo de criação, leitura, atualização e deleção de sensores
+    criar_sensor(conexao, 1, 'praga', 15.5)
+    criar_sensor(conexao, 2, 'doenca', 7.3)
+    ler_sensores(conexao)
+    
+    # Atualizar o valor do sensor 1
+    atualizar_sensor(conexao, 1, 20.5)
+    
+    # Criar uma ação de controle para o sensor 1
+    criar_acao_controle(conexao, 1, 'quimico', 20.5, 'quimico')
+    
+    # Criar uma aplicação de produto para o sensor 2
+    criar_aplicacao_produto(conexao, 2, 'fungicida')
+
+    # Ler sensores após atualização
+    ler_sensores(conexao)
+    
+    # Deletar o sensor 2
+    deletar_sensor(conexao, 2)
+    
+    # Ler sensores após deleção
+    ler_sensores(conexao)
+
+    # Fechar conexão com o banco de dados
+    conexao.close()
+
+if __name__ == "__main__":
+    main()
+```
+
+### Explicação do Código:
+
+1. **Função `conectar_banco`**: Estabelece a conexão com o banco de dados Oracle.
+2. **Função `criar_sensor`**: Insere um novo sensor na tabela `sensores`.
+3. **Função `ler_sensores`**: Lê todos os sensores cadastrados no banco de dados.
+4. **Função `atualizar_sensor`**: Atualiza o valor de um sensor específico.
+5. **Função `deletar_sensor`**: Deleta um sensor do banco de dados com base no ID.
+6. **Função `criar_acao_controle`**: Insere uma nova ação de controle na tabela `acoes_controle`, utilizando a sequência para gerar o ID.
+7. **Função `criar_aplicacao_produto`**: Registra a aplicação de um produto (pesticida ou fungicida) na tabela `aplicacao_produtos`, também utilizando a sequência para gerar o ID.
+8. **Função `main`**: Demonstra o fluxo completo do CRUD, desde a criação até a exclusão de registros.
+
+### Observações:
+- Este código é adaptado para funcionar com um banco de dados Oracle, usando a biblioteca `cx_Oracle` para interação.
+- Para usar o código, você precisará da biblioteca `cx_Oracle` instalada, que pode ser instalada com `pip install cx_Oracle`.
+- Você pode ajustar o código conforme as regras de negócio e a lógica de aplicação do seu sistema de monitoramento.
+
