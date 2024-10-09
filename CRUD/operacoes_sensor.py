@@ -9,6 +9,7 @@ def criar_sensor(conexao):
         cursor = conexao.cursor()
         print('-------------CADASTRAR SENSOR------------------\n')
         tipo = input('Digite o tipo de sensor......: ')
+        tipo = tipo.upper()
         descricao = input(' Digite uma breve descrição para o sensor:   ')
         area = float(input(' Digite a area monitorada em mts pelo sensor:   '))
         localizacao = input(' Digite a localizacao do sensor:   ')

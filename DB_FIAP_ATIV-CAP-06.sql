@@ -40,6 +40,8 @@ CREATE TABLE aplicacao_produtos (
     id_sensor NUMBER,     
     id_leitura NUMBER,
     id_produto NUMBER,
+    nome VARCHAR2(100),
+    tipo VARCHAR2(100),
     vl_leitura NUMBER(5,2),                     
     quantidade_aplicacao NUMBER(5,2),                
     data_aplicacao TIMESTAMP DEFAULT SYSDATE, 

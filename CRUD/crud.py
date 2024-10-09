@@ -2,7 +2,7 @@ from conection import conectar_banco
 from operacoes_sensor import menu_sensor
 from operacoes_leituras import menu_leitura
 from operacoes_produto import menu_produto
-from operacoes_cip import aplicar_produto
+from operacoes_cip import criar_aplicacao
 
 import os
 
@@ -37,7 +37,7 @@ def main():
             case 3:
                 menu_produto(conexao,conectado)
             case 4:
-                aplicar_produto(conexao)
+                criar_aplicacao(conexao)
             case 5:
                 conexao.close()
                 conectado = False

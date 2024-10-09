@@ -11,6 +11,7 @@ def criar_produto(conexao):
         print('-------------CADASTRAR PRODUTO------------------\n')
         nome = input('Digite o nome do produto......: ')
         tipo = input(' Digite o tipo: pesticida ou fungicida:   ')
+        tipo = tipo.upper()
         dosagem_min = float(input(' Digite a dosagem minima em (L/ha):   '))
         dosagem_max = float(input(' Digite a dosagem maxima em (L/ha):   '))
 
